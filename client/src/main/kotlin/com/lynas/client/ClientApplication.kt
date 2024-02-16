@@ -39,12 +39,13 @@ class DemoController(val restClient: RestClient) {
 		val result = restClient.post()
 			.uri("http://localhost:8082/verify-time")
 			.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-			.header("TOKEN", token)
-			.body(ObjectMapper().writeValueAsString(DemoObject(name = "Demo")))
+			.header("AUTH-TOKEN", token)
+			.body(ObjectMapper().writeValueAsString(DemoObject(data = "Demo")))
 			.retrieve()
-			.toEntity(String::class.java)
+			.toBodilessEntity()
+			.statusCode
 
-		return "ok $result"
+		return "Http Response code ${result.value()}"
 	}
 }
 
@@ -68,7 +69,7 @@ object RSAEncryptionUtil {
 	}
 }
 
-data class DemoObject(val name: String)
+data class DemoObject(val data: String)
 
 const val publicKey = "-----BEGIN PUBLIC KEY-----\n" +
 		"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCjGRf+j5Q3fY44WCnaeNnzw/d8\n" +
